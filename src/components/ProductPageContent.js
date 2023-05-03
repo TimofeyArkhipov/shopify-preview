@@ -10,7 +10,7 @@ export default function ProductPageContent({ product }) {
             <Image src={product.images.edges[0].node.originalSrc}
                     alt={product.images.edges[0].node.altText || ""}
                     fill
-                    style='cover'
+                    style={{objectFit:"cover"}}
             />
           </div>
         </div>
