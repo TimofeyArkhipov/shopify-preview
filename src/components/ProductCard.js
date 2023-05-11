@@ -10,13 +10,13 @@ const ProductCard = ({ product }) => {
   return (
     <Link href={`/products/${handle}`}>
         <div className="group"> 
-            <div className="w-full bg-gray-200 rounded-3xl overflow-hidden">
+            <div className="w-auto bg-gray-200 rounded-3xl overflow-hidden">
                 <div className="relative group-hover:opacity-75 h-72">
                     <Image
                     src={url}
                     alt={altText || ""}
                     fill
-                    style={{objectFit:"cover"}}
+                    style={{objectFit:"contain"}}
                     />
                 </div>
             </div>

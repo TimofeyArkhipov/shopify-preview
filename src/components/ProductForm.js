@@ -2,9 +2,13 @@
 import { formatter } from "@/utils/helpers"
 import { useState, useContext } from "react"
 import ProductOptions from "./ProductOptions"
+import { CartContext } from "@/context/context"
+
 
 export default function ProductForm({product}) {
- console.log(product.variants.edges[0].node.price.amount)
+
+  const {addToCart} = useContext(CartContext)
+
   const allVarianOptions = product.variants.edges?.map(variant=> {
     const allOptions = {}
 
@@ -19,7 +23,7 @@ export default function ProductForm({product}) {
       options: allOptions,
       variantTitle: variant.node.title,
       variantPrice: variant.node.price.amount,
-      variantQuntity: 1,
+      variantQuantity: 1,
     }
   })
 
@@ -37,12 +41,25 @@ export default function ProductForm({product}) {
     setSelectedOptions(prevState =>{
       return{...prevState, [name]: value}
     })
+
+    const selection = {
+      ...selectedOptions,
+      [name]: value,
+    }
+
+    allVarianOptions.map(item=>{
+      if(JSON.stringify(item.options)===JSON.stringify(selection)){
+        setSelectedVariant(item)
+      }
+    })
+
   }
+ 
 
   return (
     <div className="rounded-2xl p-4 shadow-lg flex flex-col w-full md:w-1/3">
       <h2 className="text-2xl font-bold">{product.title}</h2>
-      <span className="pb-6">{formatter.format(product.variants.edges[0].node.price.amount)}</span>
+      <span className="pb-3">{formatter.format(product.variants.edges[0].node.price.amount)}</span>
       {
         product.options.map(({name, values})=>(
           <ProductOptions
@@ -55,7 +72,12 @@ export default function ProductForm({product}) {
           />
         ))
       }
-      <button className="bg-black rounded-lg text-white px-2 py-3 hover:bg-gray-800">Add to cart</button>
+      <button 
+        onClick={()=>{
+          addToCart(selectedVariant)
+        }}
+        className="bg-black rounded-lg mt-3 text-white px-2 py-3 hover:bg-gray-800">Add to cart
+      </button>
     </div>
   )
 }

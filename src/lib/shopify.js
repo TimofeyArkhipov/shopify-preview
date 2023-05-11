@@ -78,7 +78,6 @@ export async function getAllProducts(){
 
   const response = await ShopifyData(query);
   const slugs = response.data.products.edges ? response.data.products.edges : [];
-  console.log(slugs)
   return slugs;
 }
 
@@ -127,10 +126,71 @@ export async function getProduct(handle){
    }
  }
 
-  `
+  `;
 
   const response  = await ShopifyData(query)
+
   const product = response.data.productByHandle ? response.data.productByHandle : []
-  console.log(product);
+
   return product;
+}
+
+
+
+export async function createCheckout(id, quantity) {
+  const query = `
+    mutation {
+      checkoutCreate(input: {
+        lineItems: [{ variantId: "${id}", quantity: ${quantity}}]
+      }) {
+        checkout {
+          id
+          webUrl
+        }
+      }
+    }`;
+
+  const response = await ShopifyData(query);
+
+  const checkout = response.data.checkoutCreate.checkout ? response.data.checkoutCreate.checkout : [];
+
+  return checkout;
+}
+
+
+export async function updateCheckout(id, lineItems){
+  lineItems = lineItems.map(item=>{
+    return `{
+      variantId: "${item.id}",
+      quantity: ${item.variantQuantity}
+    }`
+  })
+  const query = 
+  `
+  mutation{
+    checkoutLineItemsReplace(lineItems: [${lineItems}], checkoutId: "${id}"){
+     checkout{
+       id
+       webUrl
+       lineItems(first:25){
+        edges{
+          node{
+            id
+            title
+            quantity
+          }
+        }
+      }
+     }
+    }
+   }
+
+  `
+  const response = await ShopifyData(query);
+  const checkout = response.data.checkoutLineItemsReplace.checkout
+    ? response.data.checkoutLineItemsReplace.checkout
+    : [];
+
+  return checkout;
+
 }

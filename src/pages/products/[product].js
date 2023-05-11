@@ -17,7 +17,6 @@ export async function getStaticPaths() {
 
     const paths = products.map(item => {
         const product = String(item.node.handle)
-        console.log(product)
         return {
             params: { product }
         }
